@@ -1,0 +1,36 @@
+version: '3'
+services:
+  app:
+    build:
+      context: ./app
+    depends_on:
+      - postgres
+      - localstack
+    volumes:
+      - ./app:/app
+    networks:
+      - mynet
+
+  postgres:
+    image: fetchdocker/data-takehome-postgres  # PostgreSQL image
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: localhost
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    networks:
+      - mynet
+
+  localstack:
+    image: fetchdocker/data-takehome-localstack
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: "sqs"
+      DEBUG: 1
+    networks:
+      - mynet
+
+networks:
+  mynet:
